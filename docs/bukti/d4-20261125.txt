@@ -1,0 +1,33 @@
+
+== unpaid_ubah_tindakan ==
+  tambah tindakan: 201 {"success":true,"message":"Tindakan ditambahkan","data":{"id":55,"visit_id":383,"procedure_id":25,"qty":1,"unit_price":"50000.00","status":"ACTIVE","void_reason
+  void tindakan: 200 {"success":true,"message":"Tindakan dibatalkan (VOID)","data":{"id":55,"visit_id":383,"procedure_id":25,"qty":1,"unit_price":"50000.00","status":"VOID","void_re
+  total: 25000 -> 75000 -> 25000 | revision: 1 -> 2 -> 3 | audit: 1 -> 3 -> 5
+[PASS] unpaid_ubah_tindakan - total naik 50000 lalu kembali, revision naik tiap perubahan, audit bertambah, baris VOID tersimpan (visit_procedures=1, invoice_items VOID=1)
+
+== partial_refund_due ==
+  bayar sebagian: 200 {"success":true,"message":"Pembayaran berhasil","data":{"payment":{"id":33,"payment_no":"PAY20261125-0033","invoice_id":384,"method":"CASH","amount":"55000.00",
+  void setelah bayar: 200 {"success":true,"message":"Tindakan dibatalkan (VOID)","data":{"id":56,"visit_id":384,"procedure_id":26,"qty":1,"unit_price":"50000.00","status":"VOID","void_re
+  sebelum void: total=75000 paid=55000 status=PARTIAL | sesudah: total=25000 paid=55000 status=PAID refund_due=30000
+[PASS] partial_refund_due - status awal=PARTIAL (harapan PARTIAL), refund_due=30000 (harapan 30000), paid_total tidak berubah
+
+== paid_terkunci_adjustment ==
+  void saat PAID: 422 {"success":false,"message":"Invoice sudah lunas. Gunakan adjustment dengan alasan.","data":null,"meta":null,"errors":[],"request_id":"0186cdef02e3e4eb","code":"
+  tambah saat PAID: 422 {"success":false,"message":"Tidak dapat menambah tindakan pada status kunjungan ini","data":null,"meta":null,"errors":[],"request_id":"cfa81f4c4b1d9a90","code":
+  adjustment tanpa alasan: 422 {"success":false,"message":"Alasan penyesuaian wajib diisi","data":null,"meta":null,"errors":[],"request_id":"951d098b012d32fa","code":"UNPROCESSABLE"}
+  adjustment berasalan: 200 {"success":true,"message":"Penyesuaian invoice tersimpan","data":{"id":385,"invoice_no":"INV20261125-0385","visit_id":385,"status":"PARTIAL","total":"85000.00",
+  status=PAID, total 75000 -> (setelah tolak) 75000 -> (setelah adjustment) 85000
+[PASS] paid_terkunci_adjustment - ubah langsung ditolak (422/422), adjustment tanpa alasan 422, ADJ=1, item asli tetap 2/2
+
+== ubah_diagnosis ==
+  simpan RME: 200 {"success":true,"message":"Rekam medis tersimpan","data":{"id":58,"visit_id":386,"anamnesis":"Demam, batuk","blood_pressure":"120/80","temperature":"38.1","puls
+  diagnosis 1: 200 {"success":true,"message":"Diagnosis tersimpan","data":[{"id":87,"visit_id":386,"medical_record_id":58,"icd10_code":"J00","name":"Nasofaringitis akut","type":"P
+  diagnosis 2: 200 {"success":true,"message":"Diagnosis tersimpan","data":[{"id":88,"visit_id":386,"medical_record_id":58,"icd10_code":"J06.9","name":"ISPA, tidak spesifik","type"
+  revisi RME=3, diagnosis utama=1, total 25000 -> 25000
+[PASS] ubah_diagnosis - revisi RME=3 (>=1), diagnosis utama=1 (harapan 1), tagihan tetap 25000
+
+===== RINGKASAN D4 (2026-11-25T04:13:50.139Z) =====
+PASS  unpaid_ubah_tindakan  total naik 50000 lalu kembali, revision naik tiap perubahan, audit bertambah, baris VOID tersimpan (visit_procedures=1, invoice_items VOID=1)
+PASS  partial_refund_due  status awal=PARTIAL (harapan PARTIAL), refund_due=30000 (harapan 30000), paid_total tidak berubah
+PASS  paid_terkunci_adjustment  ubah langsung ditolak (422/422), adjustment tanpa alasan 422, ADJ=1, item asli tetap 2/2
+PASS  ubah_diagnosis  revisi RME=3 (>=1), diagnosis utama=1 (harapan 1), tagihan tetap 25000

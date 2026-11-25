@@ -4,3 +4,4 @@ node_modules/
 dist/
 runtime/
 keys/
+tests/concurrency/.d5_state.json
