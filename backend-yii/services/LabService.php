@@ -26,6 +26,10 @@ class LabService
             if (!$visit) {
                 throw ApiException::notFound('Kunjungan tidak ditemukan');
             }
+            $invoice = $db->createCommand('SELECT * FROM invoices WHERE visit_id = :v FOR UPDATE', [':v' => $visitId])->queryOne();
+            if ($invoice && $invoice['status'] === 'PAID') {
+                throw ApiException::unprocessable('Invoice sudah lunas. Gunakan adjustment dengan alasan.');
+            }
             $tests = $db->createCommand(
                 'SELECT * FROM lab_tests WHERE id IN (' . implode(',', array_map('intval', $testIds)) . ') AND is_active = true'
             )->queryAll();

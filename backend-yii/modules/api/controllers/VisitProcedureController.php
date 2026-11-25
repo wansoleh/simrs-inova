@@ -70,6 +70,14 @@ class VisitProcedureController extends BaseApiController
             if (!$old) {
                 throw ApiException::notFound('Tindakan tidak ditemukan pada kunjungan ini');
             }
+            $visit = $db->createCommand('SELECT * FROM visits WHERE id = :id', [':id' => (int) $id])->queryOne();
+            if (!$visit) {
+                throw ApiException::notFound('Kunjungan tidak ditemukan');
+            }
+            $invoice = $db->createCommand('SELECT * FROM invoices WHERE visit_id = :v FOR UPDATE', [':v' => (int) $id])->queryOne();
+            if ($invoice && $invoice['status'] === 'PAID') {
+                throw ApiException::unprocessable('Invoice sudah lunas. Gunakan adjustment dengan alasan.');
+            }
             $n = $db->createCommand(
                 "UPDATE visit_procedures SET status = 'VOID', void_reason = :r, updated_at = now()
                  WHERE id = :id AND status = 'ACTIVE'",

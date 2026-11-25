@@ -28,6 +28,10 @@ class PharmacyService
             if (in_array($visit['status'], ['CANCELLED', 'PAID'], true)) {
                 throw ApiException::unprocessable('Kunjungan tidak dapat diberi resep pada status ini');
             }
+            $invoice = $db->createCommand('SELECT * FROM invoices WHERE visit_id = :v FOR UPDATE', [':v' => $visitId])->queryOne();
+            if ($invoice && $invoice['status'] === 'PAID') {
+                throw ApiException::unprocessable('Invoice sudah lunas. Gunakan adjustment dengan alasan.');
+            }
             $no = $db->createCommand(
                 "SELECT 'RX' || to_char(now(), 'YYYYMMDD') || '-' || lpad(nextval('prescription_no_seq')::text, 4, '0')"
             )->queryScalar();

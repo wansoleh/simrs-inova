@@ -267,6 +267,18 @@ class BillingService
             if ($invoice['status'] !== 'PAID') {
                 throw ApiException::unprocessable('Penyesuaian hanya untuk invoice yang sudah PAID');
             }
+            $oldItems = $db->createCommand("SELECT ref_type, ref_id, description, qty, unit_price, amount, status FROM invoice_items WHERE invoice_id = :id ORDER BY id", [':id' => $invoiceId])->queryAll();
+            $db->createCommand(
+                'INSERT INTO invoice_revisions (invoice_id, revision, snapshot, reason, created_by)
+                 VALUES (:id, :rev, :snap, :reason, :by)',
+                [
+                    ':id' => $invoiceId,
+                    ':rev' => (int) $invoice['revision'],
+                    ':snap' => json_encode($invoice + ['items' => $oldItems], JSON_UNESCAPED_UNICODE),
+                    ':reason' => 'Penyesuaian: ' . $reason,
+                    ':by' => $actor['id'] ?? null,
+                ]
+            )->execute();
             $description = trim((string) ($data['description'] ?? 'Penyesuaian tagihan'));
             $refId = (int) $db->createCommand("SELECT COALESCE(max(ref_id), 0) + 1 FROM invoice_items WHERE invoice_id = :id AND ref_type = 'ADJ'", [':id' => $invoiceId])->queryScalar();
             $db->createCommand(
