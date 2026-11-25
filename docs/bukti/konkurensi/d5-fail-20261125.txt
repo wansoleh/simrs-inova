@@ -1,0 +1,8 @@
+  POST lab-orders {test_ids}: 201 {"success":true,"message":"Order laboratorium dibuat","data":{"id":20,"order_no":"LAB20261125-0020","visit_id":388,"status":"ORDERED","order
+  menunggu worker (interval 15 detik) ...
+  [OK] order tersimpan walau integrasi gagal
+  [OK] tepat 1 event outbox untuk order (satu transaksi)
+  [OK] status FAILED + last_error terisi -> OUTBOX_FORCE_FAIL aktif
+  [OK] attempts naik pada percobaan ulang -> attempts=2
+
+[PASS] D5 fase fail (order 20). Lanjut: restart Node TANPA flag, lalu: node tests/concurrency/d5_outbox.js recover

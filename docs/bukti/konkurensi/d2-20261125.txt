@@ -1,0 +1,23 @@
+
+== stock_race_2_resep (stok 5, 2 resep qty 5) ==
+  obat 16 | stok awal 5 | 2 resep x qty 5 x 1 panggilan
+  respons: {"200":1,"422 Stok Obat Uji 9817 tidak cukup":1}
+  stok akhir=0 (harapan 0), mutasi stok=1, resep DISPENSED=1 (harapan 1)
+[PASS] stock_race_2_resep (stok 5, 2 resep qty 5) - sukses=1/1, stok akhir=0/0, mutasi=1, dispensed=1
+
+== stock_race_8_resep (stok 3, 8 resep qty 1) ==
+  obat 17 | stok awal 3 | 8 resep x qty 1 x 1 panggilan
+  respons: {"200":3,"422 Stok Obat Uji 7511 tidak cukup":5}
+  stok akhir=0 (harapan 0), mutasi stok=3, resep DISPENSED=3 (harapan 3)
+[PASS] stock_race_8_resep (stok 3, 8 resep qty 1) - sukses=3/3, stok akhir=0/0, mutasi=3, dispensed=3
+
+== double_dispense (1 resep diserahkan 5x paralel) ==
+  obat 18 | stok awal 10 | 1 resep x qty 4 x 5 panggilan
+  respons: {"200":1,"409 Resep sudah diserahkan atau tidak dalam proses":4}
+  stok akhir=6 (harapan 6), mutasi stok=1, resep DISPENSED=1 (harapan 1)
+[PASS] double_dispense (1 resep diserahkan 5x paralel) - sukses=1/1, stok akhir=6/6, mutasi=1, dispensed=1
+
+===== RINGKASAN (2026-11-25T03:51:50.906Z) =====
+PASS  stock_race_2_resep (stok 5, 2 resep qty 5)  sukses=1/1, stok akhir=0/0, mutasi=1, dispensed=1
+PASS  stock_race_8_resep (stok 3, 8 resep qty 1)  sukses=3/3, stok akhir=0/0, mutasi=3, dispensed=3
+PASS  double_dispense (1 resep diserahkan 5x paralel)  sukses=1/1, stok akhir=6/6, mutasi=1, dispensed=1

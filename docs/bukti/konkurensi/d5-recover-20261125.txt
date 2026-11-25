@@ -1,0 +1,9 @@
+  sebelum pulih: {"status":"FAILED","attempts":2,"last_error":"OUTBOX_FORCE_FAIL aktif","sent_at":null,"idempotency_key":"8f698ec8-b8e3-49b0-829c-d24681353ea6"}
+  sesudah pulih: {"status":"SENT","attempts":2,"last_error":null,"sent_at":"2026-11-25T04:44:49.836824+00:00","idempotency_key":"8f698ec8-b8e3-49b0-829c-d24681353ea6"}
+  [OK] status berubah FAILED -> SENT otomatis
+  [OK] sent_at terisi, last_error kosong
+  [OK] riwayat attempts tetap tercatat -> attempts=2
+  [OK] tidak ada event ganda (1 baris, 1 idempotency_key)
+  [OK] tidak ada order ganda
+
+[PASS] D5 fase recover (order 20)

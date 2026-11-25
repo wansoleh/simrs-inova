@@ -1,0 +1,18 @@
+
+== register_race ==
+  tanggal 2026-12-03 | respons: {"201":1,"409 Pasien sudah terdaftar, antrean 1 (V20261203-0133)":19}
+[PASS] register_race - 201=1, baris DB=1 (harapan 1 dan 1)
+
+== queue_unique ==
+  tanggal 2026-12-04 | respons: {"201":15}
+  queue_no di DB : 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+[PASS] queue_unique - 201=15/15, queue_no 1..15 unik tanpa lubang: true
+
+== quota_race ==
+  tanggal 2026-12-05 | kuota 40 | pendaftar 50 | respons: {"201":40,"422 Kuota pendaftaran pada jadwal ini sudah penuh":10}
+[PASS] quota_race - 201=40, baris DB=40 (harapan tepat 40)
+
+===== RINGKASAN (2026-11-25T03:31:05.408Z) =====
+PASS  register_race  201=1, baris DB=1 (harapan 1 dan 1)
+PASS  queue_unique  201=15/15, queue_no 1..15 unik tanpa lubang: true
+PASS  quota_race  201=40, baris DB=40 (harapan tepat 40)

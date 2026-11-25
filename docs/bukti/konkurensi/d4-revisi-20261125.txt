@@ -1,0 +1,26 @@
+ invoice_id | revision |                     reason                      |          created_at           
+------------+----------+-------------------------------------------------+-------------------------------
+        385 |        2 | Penyesuaian: Koreksi uji D.4                    | 2026-11-25 04:13:47.879725+00
+        385 |        1 | Tindakan ditambahkan                            | 2026-11-25 04:13:47.641655+00
+        384 |        2 | Tindakan dibatalkan: Koreksi tindakan (uji D.4) | 2026-11-25 04:13:45.63425+00
+        384 |        1 | Tindakan ditambahkan                            | 2026-11-25 04:13:45.512229+00
+        383 |        2 | Tindakan dibatalkan: Salah input (uji D.4)      | 2026-11-25 04:13:43.384962+00
+        383 |        1 | Tindakan ditambahkan                            | 2026-11-25 04:13:43.289031+00
+        381 |        1 | Tindakan ditambahkan                            | 2026-11-25 04:09:53.206915+00
+        380 |        2 | Tindakan dibatalkan: Koreksi tindakan (uji D.4) | 2026-11-25 04:09:51.233755+00
+(8 rows)
+
+   table_name    | record_id |   action   | user_id |          created_at           
+-----------------+-----------+------------+---------+-------------------------------
+ diagnoses       |        58 | SYNC       |       3 | 2026-11-25 04:13:50.063877+00
+ diagnoses       |        58 | SYNC       |       3 | 2026-11-25 04:13:49.957257+00
+ medical_records |        58 | UPDATE     |       3 | 2026-11-25 04:13:49.910568+00
+ visits          |       386 | START_EXAM |       3 | 2026-11-25 04:13:49.853088+00
+ visits          |       386 | CHECKIN    |       2 | 2026-11-25 04:13:49.825357+00
+ visits          |       386 | CREATE     |       2 | 2026-11-25 04:13:49.747548+00
+ invoices        |       386 | SYNC       |       2 | 2026-11-25 04:13:49.747548+00
+ patients        |       476 | CREATE     |       2 | 2026-11-25 04:13:49.724704+00
+ procedures      |        28 | CREATE     |       1 | 2026-11-25 04:13:49.18708+00
+ invoices        |       385 | ADJUSTMENT |       1 | 2026-11-25 04:13:47.879725+00
+(10 rows)
+
