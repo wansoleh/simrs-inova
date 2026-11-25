@@ -1,0 +1,19 @@
+
+== same_key_parallel (10x key sama) ==
+  invoice sebelum: {"id":368,"invoice_no":"INV20261125-0368","visit_id":368,"status":"UNPAID","total":25000.00,"paid_total":0.00,"refund_due":0.00,"revision":1,"created_at":"2026-11-25T03:51:51.979756+00:00","updated_at":"2026-11-25T03:51:51.979756+00:00"}
+  respons: {"200":10} | baru: 1 | replay: 9
+  invoice sesudah: {"id":368,"invoice_no":"INV20261125-0368","visit_id":368,"status":"PARTIAL","total":25000.00,"paid_total":1000.00,"refund_due":0.00,"revision":1,"created_at":"2026-11-25T03:51:51.979756+00:00","updated_at":"2026-11-25T03:51:52.122068+00:00"}
+[PASS] same_key_parallel (10x key sama) - 200=10/10, baru=1, replay=9, baris payments=1, total=1000 (harapan 1 baris, 1000)
+
+== different_payload_same_key ==
+  pertama: 200 | key sama, nominal beda: 422 Idempotency-Key sudah dipakai untuk payload yang berbeda
+[PASS] different_payload_same_key - pertama=200, nominal-beda=422 (harapan 200 lalu 422), baris=1, total=1000
+
+== invalid_or_missing_key ==
+  key tidak valid: 422 | tanpa header: 422
+[PASS] invalid_or_missing_key - tidak-valid=422, tanpa-header=422 (harapan 422/422), baris payments=0 (harapan 0)
+
+===== RINGKASAN (2026-11-25T03:51:54.471Z) =====
+PASS  same_key_parallel (10x key sama)  200=10/10, baru=1, replay=9, baris payments=1, total=1000 (harapan 1 baris, 1000)
+PASS  different_payload_same_key  pertama=200, nominal-beda=422 (harapan 200 lalu 422), baris=1, total=1000
+PASS  invalid_or_missing_key  tidak-valid=422, tanpa-header=422 (harapan 422/422), baris payments=0 (harapan 0)
