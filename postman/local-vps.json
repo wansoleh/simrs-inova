@@ -1,0 +1,57 @@
+{
+  "info": {
+    "name": "SIMRS Inova - Local VPS",
+    "schema": "https://schema.getpostman.com/schema/collection/v2.1.0.json",
+    "description": "SIMRS Inova Local VPS Configuration",
+    "auth": {
+      "type": "bearer",
+      "bearer": [
+        {
+          "key": "token",
+          "value": "",
+          "type": "string",
+          "disabled": true
+        }
+      ]
+    },
+    "variable": [
+      {
+        "key": "base_url_yii",
+        "value": "http://127.0.0.1:8088",
+        "type": "string"
+      },
+      {
+        "key": "base_url_node",
+        "value": "http://127.0.0.1:3101",
+        "type": "string"
+      }
+    ],
+    "event": {
+      "prerequest": {
+        "exec": [
+          "pm.environment.set(\"token\", \"\"); pm.environment.set(\"login_success\", false);"
+        ]
+      }
+    },
+    "item": [
+      {
+        "name": "System",
+        "item": [
+          {
+            "name": "Health Check",
+            "request": {
+              "method": "GET",
+              "url": "http://127.0.0.1:8088/api/v1/health"
+            },
+            "event": {
+              "listen": "test",
+              "script": [
+                "pm.test('status code 200', function() { pm.response.code === 200; });"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

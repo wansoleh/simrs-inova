@@ -12,7 +12,7 @@ export default defineConfig({
         changeOrigin: false,
       },
       '/svc': {
-        target: process.env.VITE_NODE_TARGET || 'http://127.0.0.1:3001',
+        target: process.env.VITE_NODE_TARGET || 'http://127.0.0.1:3101',
         changeOrigin: false,
       },
     },

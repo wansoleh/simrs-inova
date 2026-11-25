@@ -50,16 +50,25 @@ async function processOutboxOnce() {
           [event.id]
         );
         sent += 1;
-      } catch (err) {
+} catch (err) {
         const attempts = event.attempts + 1;
-        const delayMinutes = Math.min(2 ** attempts, 60);
-        await client.query(
-          `UPDATE integration.outbox
-           SET status = 'FAILED', attempts = $2, last_error = $3,
-               next_retry_at = now() + ($4 || ' minutes')::interval
-           WHERE id = $1`,
-          [event.id, attempts, err.message, delayMinutes]
-        );
+        // backoff: 2**attempts menit, maks 60 menit
+        if (attempts >= 8) {
+          // status DEAD: tidak akan diproses lagi oleh worker, hanya bisa dikembalikan manual via API
+          await client.query(
+            `UPDATE integration.outbox SET status = 'DEAD', attempts = $1, last_error = $2 WHERE id = $3`,
+            [attempts, err.message, event.id]
+          );
+        } else {
+          const delayMinutes = Math.min(2 ** attempts, 60);
+          await client.query(
+            `UPDATE integration.outbox
+             SET status = 'FAILED', attempts = $2, last_error = $3,
+                next_retry_at = now() + ($4 || ' minutes')::interval
+            WHERE id = $1`,
+            [event.id, attempts, err.message, delayMinutes]
+          );
+        }
         failed += 1;
       }
     }

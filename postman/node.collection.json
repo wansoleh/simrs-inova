@@ -1,0 +1,442 @@
+{
+  "info": {
+    "name": "SIMRS Inova - Node API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth: login semua role",
+      "item": [
+        {
+          "name": "login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_admin', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"admin\",\"password\":\"admin123\"}"
+            }
+          }
+        },
+        {
+          "name": "login pendaftaran",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_pendaftaran', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"pendaftaran\",\"password\":\"pendaftaran123\"}"
+            }
+          }
+        },
+        {
+          "name": "login dokter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_dokter', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"dokter\",\"password\":\"dokter123\"}"
+            }
+          }
+        },
+        {
+          "name": "login farmasi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_farmasi', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"farmasi\",\"password\":\"farmasi123\"}"
+            }
+          }
+        },
+        {
+          "name": "login lab",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_lab', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"lab\",\"password\":\"lab123\"}"
+            }
+          }
+        },
+        {
+          "name": "login kasir",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });",
+                  "pm.collectionVariables.set('token_kasir', pm.response.json().data.access_token);",
+                  "pm.test('ada access_token', () => pm.expect(pm.response.json().data.access_token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:8088/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"kasir\",\"password\":\"kasir123\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ops",
+      "item": [
+        {
+          "name": "health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth middleware",
+      "item": [
+        {
+          "name": "tanpa token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.expect([401]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/lab/orders"
+          }
+        },
+        {
+          "name": "token sampah -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.expect([401]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer abc.def.ghi"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/lab/orders"
+          }
+        },
+        {
+          "name": "dokter input hasil lab -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_dokter}}"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/lab/orders/1/results",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "kasir buka lab orders -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_kasir}}"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/lab/orders"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lab API",
+      "item": [
+        {
+          "name": "lab daftar order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_lab}}"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/lab/orders"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "summary periode",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/dashboard/summary?from=2026-11-01T00:00:00.000Z&to=2026-11-30T23:59:59.000Z"
+          }
+        },
+        {
+          "name": "summary tanpa token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', () => pm.expect([401]).to.include(pm.response.code));",
+                  "pm.test('format response seragam', () => { const j = pm.response.json(); pm.expect(j).to.have.property('success'); pm.expect(j).to.have.property('message'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://127.0.0.1:3101/svc/v1/dashboard/summary"
+          }
+        }
+      ]
+    }
+  ]
+}

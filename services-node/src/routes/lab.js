@@ -1,10 +1,11 @@
 const express = require('express');
 const { query, withTransaction } = require('../db');
 const auth = require('../middleware/auth');
-const AppError = require('../middleware/AppError');
 const { asyncHandler } = require('../middleware/error');
-const { ok } = require('../utils/response');
+const { ok, pagination } = require('../utils/response');
 const { syncInboxToYii } = require('../services/inboxService');
+const { validate, handler } = require('../middleware/validate');
+const zod = require('zod');
 
 const router = express.Router();
 
@@ -65,10 +66,30 @@ router.get('/orders/:id', auth('lab', 'admin', 'dokter'), asyncHandler(async (re
 }));
 
 router.post('/orders/:id/results', auth('lab', 'admin'), asyncHandler(async (req, res) => {
-  const { lab_order_item_id, result_value, unit, ref_range, flag, notes, external_ref } = req.body || {};
-  if (!lab_order_item_id || result_value === undefined || result_value === null || String(result_value).trim() === '') {
-    throw AppError.unprocessable('lab_order_item_id dan result_value wajib diisi');
+  // Validate using zod schema
+  const schema = zod.object({
+    lab_order_item_id: zod.number().int().positive(),
+    result_value: zod.string().min(1),
+    unit: zod.string().optional(),
+    ref_range: zod.string().optional(),
+    flag: zod.string().optional(),
+    notes: zod.string().optional(),
+    external_ref: zod.string().optional(),
+  });
+
+  const validationResult = validate(schema, req.body, 'body');
+  if (!validationResult.success) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: validationResult.errors,
+      request_id: req.id || null,
+    });
   }
+
+  const { lab_order_item_id, result_value, unit, ref_range, flag, notes, external_ref } = validationResult.data;
   const item = await query(
     `SELECT li.id, li.lab_order_id, lo.order_no, lt.code, lt.name
      FROM lab_order_items li

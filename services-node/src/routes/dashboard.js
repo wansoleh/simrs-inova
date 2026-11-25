@@ -3,6 +3,8 @@ const { query } = require('../db');
 const auth = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/error');
 const { ok, pagination, meta } = require('../utils/response');
+const { validate, handler } = require('../middleware/validate');
+const zod = require('zod');
 
 const router = express.Router();
 router.use(auth());
@@ -14,8 +16,40 @@ function dateRange(req) {
   ];
 }
 
+// Schema for dashboard query parameters
+const dashboardQuerySchema = zod.object({
+  from: zod.string().datetime().optional(),
+  to: zod.string().datetime().optional(),
+  page: zod.number().int().positive().optional().default(1),
+  perPage: zod.number().int().positive().optional().default(20),
+  type: zod.enum(['visits', 'revenue', 'procedures', 'medicine-usage', 'payment-status']).optional(),
+});
+
+// Helper to parse validated query
+function parseDashboardQuery(req) {
+  const result = dashboardQuerySchema.safeParse({
+    from: req.query.from,
+    to: req.query.to,
+    page: req.query.page,
+    perPage: req.query.perPage,
+    type: req.query.type,
+  });
+  return result.success ? result.data : null;
+}
+
 router.get('/summary', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
   const summary = await query(
     `SELECT count(*)::int AS visits,
             count(*) FILTER (WHERE status = 'PAID')::int AS paid_visits,
@@ -47,7 +81,18 @@ router.get('/summary', asyncHandler(async (req, res) => {
 }));
 
 router.get('/visits-by-poli', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
   const result = await query(
     `SELECT poli_name, count(*)::int AS visits,
             count(*) FILTER (WHERE status = 'PAID')::int AS paid_visits,
@@ -63,7 +108,18 @@ router.get('/visits-by-poli', asyncHandler(async (req, res) => {
 }));
 
 router.get('/procedures', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
   const result = await query(
     `SELECT procedure_name, SUM(qty)::int AS qty, SUM(amount)::numeric AS amount
      FROM reporting.v_procedures
@@ -77,7 +133,18 @@ router.get('/procedures', asyncHandler(async (req, res) => {
 }));
 
 router.get('/revenue', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
   const result = await query(
     `SELECT visit_date, SUM(total)::numeric AS billed, SUM(paid_total)::numeric AS collected
      FROM reporting.v_revenue
@@ -90,7 +157,18 @@ router.get('/revenue', asyncHandler(async (req, res) => {
 }));
 
 router.get('/medicine-usage', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
   const result = await query(
     `SELECT m.name AS medicine_name, m.unit,
             SUM(pi.qty)::int AS qty,
@@ -115,45 +193,50 @@ router.get('/payment-status', asyncHandler(async (_req, res) => {
 }));
 
 router.get('/details', asyncHandler(async (req, res) => {
-  const { page, perPage, offset } = pagination(req);
-  const [from, to] = dateRange(req);
-  const type = req.query.type || 'visits';
-  const allowed = {
-    visits: {
-      count: `SELECT count(*)::int AS total FROM reporting.v_visits
-              WHERE ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)`,
-      rows: `SELECT visit_no, visit_date, patient_name, mrn, doctor_name, poli_name, status, invoice_status, total, paid_total
-             FROM reporting.v_visits
-             WHERE ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)
-             ORDER BY visit_date DESC, queue_no LIMIT $3 OFFSET $4`,
-    },
-    revenue: {
-      count: `SELECT count(*)::int AS total FROM reporting.v_revenue
-              WHERE ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)`,
-      rows: `SELECT invoice_no, visit_date, poli_name, status, total, paid_total, outstanding
-             FROM reporting.v_revenue
-             WHERE ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)
-             ORDER BY visit_date DESC, invoice_no LIMIT $3 OFFSET $4`,
-    },
-    procedures: {
-      count: `SELECT count(*)::int AS total FROM reporting.v_procedures
-              WHERE status = 'ACTIVE' AND ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)`,
-      rows: `SELECT visit_id, visit_date, poli_name, procedure_name, qty, unit_price, amount
-             FROM reporting.v_procedures
-             WHERE status = 'ACTIVE' AND ($1::date IS NULL OR visit_date >= $1::date) AND ($2::date IS NULL OR visit_date <= $2::date)
-             ORDER BY visit_date DESC LIMIT $3 OFFSET $4`,
-    },
-  };
+  // Validate query parameters
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const { from, to, type } = q;
+  const { page, perPage } = q;
   const target = allowed[type];
-  if (!target) return res.status(422).json({ success: false, message: 'type tidak valid', data: null, meta: null, errors: [], request_id: res.getHeader('X-Request-Id') });
+  if (!target) {
+    return res.status(422).json({
+      success: false,
+      message: 'type tidak valid',
+      data: null,
+      meta: null,
+      errors: ['type tidak valid'],
+      request_id: req.id || null,
+    });
+  }
   const count = await query(target.count, [from, to]);
-  const rows = await query(target.rows, [from, to, perPage, offset]);
-  return ok(res, rows.rows, 'Detail dashboard', meta(count.rows[0].total, page, perPage));
+  const rows = await query(target.rows, [from, to, perPage || 20, offset || 0]);
+  return ok(res, rows.rows, 'Detail dashboard', meta(count.rows[0].total, page || 1, perPage || 20));
 }));
 
 router.get('/export', asyncHandler(async (req, res) => {
-  const [from, to] = dateRange(req);
-  const type = req.query.type || 'revenue';
+  const q = parseDashboardQuery(req);
+  if (!q) {
+    return res.status(422).json({
+      success: false,
+      message: 'Validasi gagal',
+      data: null,
+      meta: null,
+      errors: ['Parameter query tidak valid'],
+      request_id: req.id || null,
+    });
+  }
+  const [from, to] = [q.from, q.to];
+  const type = q.type || 'revenue';
   let rows = [];
   if (type === 'revenue') {
     const result = await query(
@@ -174,7 +257,14 @@ router.get('/export', asyncHandler(async (req, res) => {
     );
     rows = result.rows;
   } else {
-    return res.status(422).json({ success: false, message: 'type export tidak valid', data: null, meta: null, errors: [], request_id: res.getHeader('X-Request-Id') });
+    return res.status(422).json({
+      success: false,
+      message: 'type export tidak valid',
+      data: null,
+      meta: null,
+      errors: ['type export tidak valid'],
+      request_id: req.id || null,
+    });
   }
   const headers = rows.length ? Object.keys(rows[0]) : ['empty'];
   const csv = [headers.join(',')]
